@@ -1,9 +1,7 @@
 import { MiniReact } from './miniReact.js';
 
-const element = MiniReact.createElement(
-  "div",
-  { id: "foo" },
-  "Hellow there"
-);
+const vdom = MiniReact.createElement("h1", { id: "some-id" }, "Hello mf");
 const container = document.getElementById("root");
-MiniReact.render(element, container);
+MiniReact.render(vdom, container);
+
+

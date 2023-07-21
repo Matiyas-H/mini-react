@@ -42,3 +42,30 @@ export const MiniReact = {
         container.appendChild(dom);
     },
 };
+
+
+// Utilities for creating virtual DOM nodes 
+
+export function createElement(type, props, ...children) {
+    return {
+        type,
+        props: {
+            ...props,
+            children: children.map(c =>
+                typeof c === "object" ? c : createTextElement(c)
+            )
+        }
+    }
+}
+
+export function createTextElement(text) {
+    return {
+        type: "TEXT_ELEMENT",
+        props: {
+            nodeValue: text,
+            children: []
+        }
+    }
+}
+
+

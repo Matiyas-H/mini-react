@@ -1,15 +1,19 @@
 export const MiniReact = {
     createElement(type, props, ...children) {
-        return {
-            type,
-            props: {
-                ...props,
-                children: children.map((child) =>
-                    typeof child === "object"
-                        ? child
-                        : MiniReact.createTextElement(child)
-                ),
-            },
+        if (typeof type === "function") {
+            return type(props);
+        } else {
+            return {
+                type,
+                props: {
+                    ...props,
+                    children: children.map((child) =>
+                        typeof child === "object"
+                            ? child
+                            : MiniReact.createTextElement(child)
+                    ),
+                },
+            };
         };
     },
     createTextElement(text) {
@@ -67,5 +71,3 @@ export function createTextElement(text) {
         }
     }
 }
-
-

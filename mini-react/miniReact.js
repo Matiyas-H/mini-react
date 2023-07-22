@@ -61,28 +61,3 @@ export function createElement(type, props, ...children) {
         }
     }
 }
-
-export function createTextElement(text) {
-    return {
-        type: "TEXT_ELEMENT",
-        props: {
-            nodeValue: text,
-            children: []
-        }
-    }
-}
-
-
-function render(element, container) {
-    const dom = element.type == "Text_ELEEMENT" ?
-        document.createTextNode("") : document.createElement(element.type);
-    const isProps = key => key !== children;
-    Object.keys(element.props)
-        .filter(isProps)
-        .map(name => {
-            dom[name] = element.props[name];
-        })
-    element.props.children.forEach(child =>
-        render(child, dom)
-    )
-}

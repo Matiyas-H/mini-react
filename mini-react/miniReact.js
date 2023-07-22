@@ -71,3 +71,10 @@ export function createTextElement(text) {
         }
     }
 }
+
+
+function render(element, container) {
+    const dom = element.type == "Text_ELEEMENT" ?
+        document.createTextNode("") : document.createElement(element.type);
+
+}

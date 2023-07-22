@@ -82,4 +82,7 @@ function render(element, container) {
         .map(name => {
             dom[name] = element.props[name];
         })
+    element.props.children.forEach(child =>
+        render(child, dom)
+    )
 }

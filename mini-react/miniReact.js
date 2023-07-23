@@ -34,7 +34,7 @@ export const MiniReact = {
 
 
 
-function _render(element, conainer) {
+function _render(element, container) {
     const dom = element.type == "TEXT_ELEMENT"
         ? document.createTextNode("")
         : document.createElement(element.type);
@@ -43,9 +43,9 @@ function _render(element, conainer) {
     Object.keys(element.props)
         .filter(isProperty)
         .forEach(name => {
-            dom[name] = element.props.name;
+            dom[name] = element.props[name];
         });
-    element.props.children(child => {
+    element.props.children.forEach(child => {
         _render(child, dom);
     })
     container.appendChild(dom);

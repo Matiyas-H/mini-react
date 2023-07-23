@@ -8,7 +8,7 @@ function Welcome({ name }) {
   )
 }
 
-const vdom = MiniReact.createElement(Welcome, { name: "Matiyas" });
+const vdom = MiniReact.createElement(Welcome, { name: "there" });
 const container = document.getElementById("root");
 MiniReact.render(vdom, container);
 

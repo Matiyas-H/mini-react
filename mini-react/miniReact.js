@@ -27,37 +27,28 @@ export const MiniReact = {
     },
 
     render(element, container) {
-        const dom =
-            element.type === "TEXT_ELEMENT"
-                ? document.createTextNode("")
-                : document.createElement(element.type);
-
-        const isProperty = (key) => key !== "children";
-        Object.keys(element.props)
-            .filter(isProperty)
-            .forEach((name) => {
-                dom[name] = element.props[name];
-            });
-
-        element.props.children.forEach((child) =>
-            MiniReact.render(child, dom)
-        );
-
-        container.appendChild(dom);
+        container.innerHTML = '';
+        _render(element, container);
     },
 };
 
 
-// Utilities for creating virtual DOM nodes 
 
-export function createElement(type, props, ...children) {
-    return {
-        type,
-        props: {
-            ...props,
-            children: children.map(c =>
-                typeof c === "object" ? c : createTextElement(c)
-            )
-        }
-    }
+function _render(element, conainer) {
+    const dom = element.type == "TEXT_ELEMENT"
+        ? document.createTextNode("")
+        : document.createElement(element.type);
+
+    const isProperty = key => key != 'children';
+    Object.keys(element.props)
+        .filter(isProperty)
+        .forEach(name => {
+            dom[name] = element.props.name;
+        });
+    element.props.children(child => {
+        _render(child, dom);
+    })
+    container.appendChild(dom);
 }
+
+

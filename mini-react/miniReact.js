@@ -1,4 +1,3 @@
-
 export function createElement(type, props, ...children) {
     if (typeof type == 'function') {
         return type(props);
@@ -14,6 +13,7 @@ export function createElement(type, props, ...children) {
         };
     }
 }
+
 export function createTextElement(text) {
     return {
         type: "TEXT",
@@ -24,11 +24,10 @@ export function createTextElement(text) {
     };
 }
 
-export function buildDOM(vdom, container) {
+export function buildDOM(vdom) {
     // Text node
     if (vdom.type === "TEXT") {
-        const node = document.createTextNode(vdom.props.nodeValue);
-        container.appendChild(node);
+        return document.createTextNode(vdom.props.nodeValue);
     }
 
     // Element node
@@ -44,25 +43,53 @@ export function buildDOM(vdom, container) {
 
         // Build and append children  
         vdom.props.children.forEach(child => {
-            buildDOM(child, dom);
+            dom.appendChild(buildDOM(child));
         });
 
-        // Append to container
-        container.appendChild(dom);
+        return dom;
     }
 }
 
+function updateDOM(dom, oldVdom, newVdom) {
+    if (oldVdom.type !== newVdom.type) {
+        const newDom = createDOM(newVdom);
+        dom.parentNode.replaceChild(newDom, dom);
+    } else {
+        updateProps(dom, oldVdom.props, newVdom.props);
+        updateChildren(dom, oldVdom.children, newVdom.children);
+    }
+}
 
+function useState(initialValue) {
+    const component = MiniReact.currentComponent;
+    const currentCursor = component.stateCursor;
+    component.state[currentCursor] = component.state[currentCursor] ?? initialValue;
+    const setState = (newState) => {
+        component.state[currentCursor] = newState;
+        MiniReact.render(component, document.getElementById('root')); // re-render
+    };
+    component.stateCursor++; // Increment the cursor for the next hook call.
+    return [component.state[currentCursor], setState];
+}
 
 
 export const MiniReact = {
-
+    currentComponent: null,
+    currentVdom: null,
     render(vdom, container) {
-        // Reset container
-        container.innerHTML = '';
+        const component = typeof vdom.type === "function" ? vdom.type(vdom.props) : vdom;
+        if (this.currentVdom == null) {
+            // If there's no existing vDOM, we build the DOM and append it to the container.
+            const newDom = buildDOM(component);
+            container.appendChild(newDom);
+        } else {
+            // Otherwise, we update the existing DOM.
+            updateDOM(container.firstChild, this.currentVdom, component);
+        }
 
-        // Recursively build DOM 
-        buildDOM(vdom, container)
-
-    }
+        // Update our current vDOM and currentComponent.
+        this.currentVdom = component;
+        this.currentComponent = component;
+    },
 }
+

@@ -1,16 +1,19 @@
 
 export function createElement(type, props, ...children) {
-    return {
-        type,
-        props: {
-            ...props,
-            children: children.map(child =>
-                typeof child === "object" ? child : createTextElement(child)
-            ),
-        }
-    };
+    if (typeof type == 'function') {
+        return type(props);
+    } else {
+        return {
+            type,
+            props: {
+                ...props,
+                children: children.map(child =>
+                    typeof child === "object" ? child : createTextElement(child)
+                ),
+            }
+        };
+    }
 }
-
 export function createTextElement(text) {
     return {
         type: "TEXT",
@@ -22,23 +25,31 @@ export function createTextElement(text) {
 }
 
 export function buildDOM(vdom, container) {
+    // Text node
+    if (vdom.type === "TEXT") {
+        const node = document.createTextNode(vdom.props.nodeValue);
+        container.appendChild(node);
+    }
 
-    const node = vdom.type === "TEXT_ELEMENT" ?
-        document.createTextNode(vdom.props.nodeValue) : document.createElement(vdom.type);
+    // Element node
+    else {
+        const dom = document.createElement(vdom.type);
 
-    Object.keys(vdom.props)
-        .filter(key => key !== 'children')
-        .forEach(name => {
-            node[name] = vdom.props[name];
-        })
+        // Add props
+        Object.keys(vdom.props)
+            .filter(key => key !== 'children')
+            .forEach(name => {
+                dom[name] = vdom.props[name];
+            });
 
-    // Build and append children  
-    vdom.props.children.forEach(child => {
-        buildDOM(child, node);
-    });
+        // Build and append children  
+        vdom.props.children.forEach(child => {
+            buildDOM(child, dom);
+        });
 
-    // Append to container
-    container.appendChild(node);
+        // Append to container
+        container.appendChild(dom);
+    }
 }
 
 

@@ -1,19 +1,9 @@
-import { MiniReact } from './miniReact.js';
+import { createElement, createTextElement, MiniReact } from "./miniReact";
 
-const App = MiniReact.createElement(
-  "div",
-  null,
-  MiniReact.createElement("h1", {}, "Hello World!"),
-  MiniReact.createElement("p", {}, "Welcome to React"),
-  MiniReact.createElement("button", { onclick: () => { console.log("it works") } }, "button")
-);
+const vdom = createElement("div", {}, createTextElement("Hello there"));
+const container = document.getElementById("root")
+MiniReact.render(vdom, container);
 
-function greeting({ name }) {
-  return "sup " + name;
-}
-
-
-
-MiniReact.render(App, document.getElementById("root"));
-
+console.log('Rendering to container', container);
+console.dir(container);
 
